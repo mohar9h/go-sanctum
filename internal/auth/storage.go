@@ -6,5 +6,5 @@ import "context"
 type TokenStorage interface {
 	StoreToken(ctx context.Context, token Token) error
 	ValidateToken(ctx context.Context, plaintext string) (string, error)
-	RevokeToken(ctx context.Context, token string) error
+	RevokeToken(ctx context.Context, plaintext string) error
 }

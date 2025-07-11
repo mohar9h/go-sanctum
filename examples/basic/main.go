@@ -35,7 +35,7 @@ func main() {
 		}
 
 		// برگرداندن توکن به کاربر
-		_, err = fmt.Fprintf(w, "Your token: %s", token.Plaintext)
+		_, err = fmt.Fprintf(w, "Your token: %s | %s", token.ID, token.Plaintext)
 		if err != nil {
 			http.Error(w, "Failed to write response", http.StatusInternalServerError)
 			return
