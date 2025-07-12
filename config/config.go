@@ -1,31 +1,51 @@
 package config
 
-import "time"
+import (
+	"crypto/rsa"
+	"errors"
+	"time"
 
-type SanctumConfig struct {
-	TokenExpiration *time.Duration `mapstructure:"token_expiration"`
-	TokenPrefix     string         `mapstructure:"token_prefix"`
-	CookieName      string         `mapstructure:"cookie_name"`
-	CookieSecure    bool           `mapstructure:"cookie_secure"`
-	CookieHTTPOnly  bool           `mapstructure:"cookie_http_only"`
-	CookieSameSite  string         `mapstructure:"cookie_same_site"`
-	TokenLength     int            `mapstructure:"token_length"`
-	CSRFEnabled     bool           `mapstructure:"csrf_enabled"`
-	CSRFHeader      string         `mapstructure:"csrf_header"`
-	StorageDriver   string         `mapstructure:"storage_driver"`
+	"github.com/mohar9h/go-sanctum/storage"
+)
+
+// Config holds the global settings for the auth package.
+type Config struct {
+	TokenLength      int             // Length of random tokens (e.g., 32)
+	TokenPrefix      string          // Prefix for random tokens (e.g., "pk_")
+	ExpireAt         time.Duration   // Token TTL (0 = unlimited)
+	SigningKey       string          // For HMAC JWT (HS256)
+	SigningMethod    string          // "HS256", "RS256"
+	PrivateKey       *rsa.PrivateKey // For RSA signing (optional)
+	PublicKey        *rsa.PublicKey  // For RSA verification (optional)
+	Storage          storage.Driver  // Optional: for random tokens
+	UseJWT           bool
+	AbilityDelimiter string // e.g., ":" for "read:posts"
 }
 
-func DefaultConfig() *SanctumConfig {
-	return &SanctumConfig{
-		TokenExpiration: nil,
-		TokenPrefix:     "Bearer",
-		CookieName:      "sanctum_token",
-		CookieSecure:    true,
-		CookieHTTPOnly:  true,
-		CookieSameSite:  "Lax",
-		TokenLength:     64,
-		CSRFEnabled:     true,
-		CSRFHeader:      "X-CSRF-TOKEN",
-		StorageDriver:   "memory",
+// Validate checks if the config is minimally valid.
+func (c *Config) Validate() error {
+	if c.SigningMethod != "HS256" && c.SigningMethod != "RS256" {
+		return errors.New("unsupported signing method")
+	}
+	if c.SigningMethod == "HS256" && c.SigningKey == "" {
+		return errors.New("missing HMAC signing key")
+	}
+	if c.SigningMethod == "RS256" && (c.PrivateKey == nil || c.PublicKey == nil) {
+		return errors.New("missing RSA key pair")
+	}
+	if c.TokenLength < 16 {
+		return errors.New("auth length too short")
+	}
+	return nil
+}
+
+// DefaultConfig returns a default config.
+func DefaultConfig() *Config {
+	return &Config{
+		TokenLength: 32,
+		TokenPrefix: "pk_",
+		//ExpireAt:       24 * time.Hour, // Default 1 day
+		SigningMethod:    "HS256",
+		AbilityDelimiter: ":",
 	}
 }
