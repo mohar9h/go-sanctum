@@ -16,7 +16,6 @@ func TestCreateRandomToken(t *testing.T) {
 		ExpireAt:         2 * time.Hour,
 		SigningMethod:    "HS256",
 		SigningKey:       "test-key",
-		UseJWT:           true,
 		AbilityDelimiter: ":",
 		Storage:          storage.NewMemoryDriver(),
 	}

@@ -18,8 +18,7 @@ type Config struct {
 	PrivateKey       *rsa.PrivateKey // For RSA signing (optional)
 	PublicKey        *rsa.PublicKey  // For RSA verification (optional)
 	Storage          storage.Driver  // Optional: for random tokens
-	UseJWT           bool
-	AbilityDelimiter string // e.g., ":" for "read:posts"
+	AbilityDelimiter string          // e.g., ":" for "read:posts"
 }
 
 // Validate checks if the config is minimally valid.
@@ -39,13 +38,13 @@ func (c *Config) Validate() error {
 	return nil
 }
 
-// DefaultConfig returns a default config.
-func DefaultConfig() *Config {
-	return &Config{
-		TokenLength: 32,
-		TokenPrefix: "pk_",
-		//ExpireAt:       24 * time.Hour, // Default 1 day
-		SigningMethod:    "HS256",
-		AbilityDelimiter: ":",
-	}
-}
+//// DefaultConfig returns a default config.
+//func DefaultConfig() *Config {
+//	return &Config{
+//		TokenLength: 32,
+//		TokenPrefix: "",
+//		//ExpireAt:       24 * time.Hour, // Default 1 day
+//		SigningMethod:    "HS256",
+//		AbilityDelimiter: ":",
+//	}
+//}
