@@ -7,7 +7,7 @@ import (
 )
 
 type memoryDriver struct {
-	tokens map[string]*Token
+	tokens map[int64]*Token
 	mu     sync.RWMutex
 }
 
@@ -15,7 +15,7 @@ var _ Driver = (*memoryDriver)(nil)
 
 func NewMemoryDriver() Driver {
 	return &memoryDriver{
-		tokens: make(map[string]*Token),
+		tokens: make(map[int64]*Token),
 	}
 }
 
@@ -26,7 +26,7 @@ func (m *memoryDriver) StoreToken(t *Token) error {
 	return nil
 }
 
-func (m *memoryDriver) FindToken(id string) (*Token, error) {
+func (m *memoryDriver) FindToken(id int64) (*Token, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	tok, ok := m.tokens[id]
@@ -39,7 +39,7 @@ func (m *memoryDriver) FindToken(id string) (*Token, error) {
 	return tok, nil
 }
 
-func (m *memoryDriver) RevokeToken(id string) error {
+func (m *memoryDriver) RevokeToken(id int64) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	delete(m.tokens, id)

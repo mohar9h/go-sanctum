@@ -1,10 +1,10 @@
 package storage
 
 type Driver interface {
-	FindByID(id string) (*Token, error)
+	FindByID(id int64) (*Token, error)
 	FindByHash(hash string) (*Token, error)
-	RevokeToken(id string) error
-	TouchLastUsed(id string) error
+	RevokeToken(id int64) error
+	TouchLastUsed(id int64) error
 	StoreToken(t *Token) error
 }
 

@@ -38,13 +38,41 @@ func (c *Config) Validate() error {
 	return nil
 }
 
-//// DefaultConfig returns a default config.
-//func DefaultConfig() *Config {
-//	return &Config{
-//		TokenLength: 32,
-//		TokenPrefix: "",
-//		//ExpireAt:       24 * time.Hour, // Default 1 day
-//		SigningMethod:    "HS256",
-//		AbilityDelimiter: ":",
-//	}
-//}
+// DefaultConfig returns a default config.
+func DefaultConfig() *Config {
+	return &Config{
+		TokenLength:      20,
+		TokenPrefix:      "",
+		ExpireAt:         0,
+		SigningMethod:    "HS256",
+		SigningKey:       "test-key",
+		AbilityDelimiter: ":",
+		Storage:          storage.NewMemoryDriver(),
+	}
+}
+
+func (c *Config) ApplyDefaults() {
+	def := DefaultConfig()
+
+	if c.TokenLength == 0 {
+		c.TokenLength = def.TokenLength
+	}
+	if c.TokenPrefix == "" {
+		c.TokenPrefix = def.TokenPrefix
+	}
+	if c.ExpireAt == 0 {
+		c.ExpireAt = def.ExpireAt
+	}
+	if c.SigningMethod == "" {
+		c.SigningMethod = def.SigningMethod
+	}
+	if c.SigningKey == "" {
+		c.SigningKey = def.SigningKey
+	}
+	if c.AbilityDelimiter == "" {
+		c.AbilityDelimiter = def.AbilityDelimiter
+	}
+	if c.Storage == nil {
+		c.Storage = storage.NewMemoryDriver()
+	}
+}

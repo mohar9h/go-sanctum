@@ -1,6 +1,6 @@
 package storage
 
-func (m *memoryDriver) FindByID(id string) (*Token, error) {
+func (m *memoryDriver) FindByID(id int64) (*Token, error) {
 	//TODO implement me
 	panic("implement me")
 }
@@ -10,7 +10,7 @@ func (m *memoryDriver) FindByHash(hash string) (*Token, error) {
 	panic("implement me")
 }
 
-func (m *memoryDriver) TouchLastUsed(id string) error {
+func (m *memoryDriver) TouchLastUsed(id int64) error {
 	//TODO implement me
 	panic("implement me")
 }
