@@ -41,9 +41,9 @@ func (g *generator) Create() (*Result, error) {
 	}
 
 	token := &storage.Token{
-		ID:        1,
 		UserId:    g.opts.UserId,
 		Name:      g.opts.Name,
+		Token:     hashed,
 		Abilities: strings.Join(g.opts.Abilities, ","),
 		CreatedAt: time.Now(),
 		ExpiresAt: expireAt,
@@ -54,7 +54,7 @@ func (g *generator) Create() (*Result, error) {
 	}
 
 	return &Result{
-		PlainText: fmt.Sprintf("%d | %s", 1, plainText),
+		PlainText: fmt.Sprintf("%d | %s", token.ID, plainText),
 		TokenID:   hashed,
 	}, nil
 }

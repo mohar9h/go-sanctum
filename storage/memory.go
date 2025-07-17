@@ -7,7 +7,7 @@ import (
 )
 
 type memoryDriver struct {
-	tokens map[int64]*Token
+	tokens map[string]*Token // key is hashed token string
 	mu     sync.RWMutex
 }
 
@@ -15,21 +15,38 @@ var _ Driver = (*memoryDriver)(nil)
 
 func NewMemoryDriver() Driver {
 	return &memoryDriver{
-		tokens: make(map[int64]*Token),
+		tokens: make(map[string]*Token),
 	}
 }
 
+// StoreToken stores the token using its hashed value as key
 func (m *memoryDriver) StoreToken(t *Token) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.tokens[t.ID] = t
+	m.tokens[t.Token] = t
 	return nil
 }
 
-func (m *memoryDriver) FindToken(id int64) (*Token, error) {
+// FindByID looks up token by its internal ID (numeric)
+func (m *memoryDriver) FindByID(id int64) (*Token, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	tok, ok := m.tokens[id]
+	for _, token := range m.tokens {
+		if token.ID == id {
+			if token.ExpiresAt != nil && time.Now().After(*token.ExpiresAt) {
+				return nil, errors.New("token expired")
+			}
+			return token, nil
+		}
+	}
+	return nil, errors.New("token not found")
+}
+
+// FindByHash looks up token by its hashed token string
+func (m *memoryDriver) FindByHash(hash string) (*Token, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	tok, ok := m.tokens[hash]
 	if !ok {
 		return nil, errors.New("token not found")
 	}
@@ -39,9 +56,23 @@ func (m *memoryDriver) FindToken(id int64) (*Token, error) {
 	return tok, nil
 }
 
-func (m *memoryDriver) RevokeToken(id int64) error {
+// RevokeToken removes a token by its hashed value
+func (m *memoryDriver) RevokeToken(hash string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	delete(m.tokens, id)
+	delete(m.tokens, hash)
+	return nil
+}
+
+// TouchLastUsed updates the last used time for analytics or session freshness
+func (m *memoryDriver) TouchLastUsed(hash string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	tok, ok := m.tokens[hash]
+	if !ok {
+		return errors.New("token not found")
+	}
+	now := time.Now()
+	tok.LastUsedAt = &now
 	return nil
 }

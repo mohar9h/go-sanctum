@@ -17,12 +17,10 @@ func CreateToken(opts *TokenOptions) (string, error) {
 	}
 	cfg.ApplyDefaults()
 
+	cfg.Storage = storage.NewGormDriver(opts.DB)
+
 	if err := cfg.Validate(); err != nil {
 		return "", fmt.Errorf("invalid config: %w", err)
-	}
-
-	if cfg.Storage != nil {
-		storage.Setup(cfg.Storage)
 	}
 
 	gen := NewGenerator(opts, cfg)

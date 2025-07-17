@@ -4,11 +4,12 @@ import "time"
 
 // Token APIToken defines the persistent structure stored in SQL/Redis.
 type Token struct {
-	ID        int64      // ID
-	UserId    int64      // Owner
-	Token     string     // Token before hash
-	Name      *string    // Device or client name
-	Abilities string     // Comma-separated abilities
-	CreatedAt time.Time  // Issued at
-	ExpiresAt *time.Time // Optional expiration
+	ID         int64      `gorm:"primaryKey;autoIncrement"`
+	UserId     int64      `gorm:"index"`
+	Token      string     `gorm:"index;size:100"`
+	Name       *string    `gorm:"size:100"`
+	Abilities  string     `gorm:"type:text"`
+	CreatedAt  time.Time  `gorm:"autoCreateTime"`
+	ExpiresAt  *time.Time `gorm:"index"`
+	LastUsedAt *time.Time
 }

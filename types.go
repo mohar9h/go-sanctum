@@ -1,6 +1,9 @@
 package auth
 
-import "github.com/mohar9h/go-sanctum/config"
+import (
+	"github.com/mohar9h/go-sanctum/config"
+	"gorm.io/gorm"
+)
 
 // Result TokenResult is the result of a successful token creation.
 type Result struct {
@@ -13,4 +16,5 @@ type TokenOptions struct {
 	Name      *string
 	Abilities []string
 	Config    *config.Config
+	DB        *gorm.DB // Required for GORM storage
 }
