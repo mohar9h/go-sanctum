@@ -39,5 +39,12 @@ func ValidateToken(raw string, cfg *config.Config) (*storage.Token, error) {
 		return nil, errors.New("token expired")
 	}
 
+	go func() {
+		err = cfg.Storage.TouchLastUsed(tok.Token)
+		if err != nil {
+
+		}
+	}()
+
 	return tok, nil
 }

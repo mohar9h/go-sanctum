@@ -50,6 +50,6 @@ func (g *gormDriver) RevokeToken(id string) error {
 func (g *gormDriver) TouchLastUsed(hash string) error {
 	return g.db.Model(&Token{}).
 		Where("token = ?", hash).
-		Update("last_used", time.Now()).
+		Update("last_used_at", time.Now()).
 		Error
 }
