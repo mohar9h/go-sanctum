@@ -19,10 +19,12 @@ func (g *gormDriver) StoreToken(t *Token) error {
 }
 
 func (g *gormDriver) FindByID(id int64) (*Token, error) {
+
 	var token Token
 	if err := g.db.First(&token, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
+
 	if token.ExpiresAt != nil && time.Now().After(*token.ExpiresAt) {
 		return nil, errors.New("token expired")
 	}
@@ -31,6 +33,7 @@ func (g *gormDriver) FindByID(id int64) (*Token, error) {
 
 func (g *gormDriver) FindByHash(hash string) (*Token, error) {
 	var token Token
+
 	if err := g.db.First(&token, "token = ?", hash).Error; err != nil {
 		return nil, err
 	}
