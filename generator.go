@@ -54,7 +54,7 @@ func (g *generator) Create() (*Result, error) {
 	}
 
 	return &Result{
-		PlainText: fmt.Sprintf("%d | %s", token.ID, plainText),
+		PlainText: fmt.Sprintf("%d|%s", token.ID, plainText),
 		TokenID:   hashed,
 	}, nil
 }

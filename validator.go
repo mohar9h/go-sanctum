@@ -19,7 +19,7 @@ func ValidateToken(raw string, cfg *config.Config) (*storage.Token, error) {
 	}
 	cfg.ApplyDefaults()
 
-	parts := strings.Split(strings.ReplaceAll(raw, " ", ""), "|")
+	parts := strings.Split(raw, "|")
 	if len(parts) != 2 {
 		return nil, ErrTokenInvalid
 	}
